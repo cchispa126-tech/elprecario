@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EL PRECARIO — Ofertas entre personas</title>
+    <meta name="description" content="Tablón de ofertas de trabajo, alquileres y otras cosas entre personas. Publica gratis o destaca tu anuncio por 2 €.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #FFD700;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+        header {
+            text-align: center;
+            padding: 30px 15px 20px;
+            border-bottom: 4px solid #000;
+        }
+        header h1 {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.15);
+        }
+        header p {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            margin: 10px auto 0;
+            max-width: 700px;
+        }
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px 15px;
+        }
+        .filtros button {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 20px;
+            border: 3px solid #000;
+            background: #FFD700;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .filtros button:hover,
+        .filtros button.activo {
+            background: #000;
+            color: #FFD700;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 15px 60px;
+        }
+        .card {
+            background: #fff;
+            border: 4px solid #000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.25);
+            transition: transform 0.15s ease;
+            position: relative;
+        }
+        .card:hover { transform: translate(-2px, -2px); }
+
+        /* Destacado */
+        .card.destacado {
+            background: #000;
+            color: #FFD700;
+            border-color: #FFD700;
+            outline: 4px solid #000;
+            box-shadow: 6px 6px 0 #000;
+        }
+        .card.destacado .tipo { background: #FFD700; color: #000; }
+        .card.destacado .contacto { border-top-color: #FFD700; }
+        .card.destacado .precio { color: #FFD700; }
+        .badge-destacado {
+            position: absolute;
+            top: -12px;
+            right: 12px;
+            background: #FFD700;
+            color: #000;
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border: 2px solid #000;
+        }
+
+        .card .tipo {
+            display: inline-block;
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            background: #000;
+            color: #FFD700;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+        .card h2 {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .card p {
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+            flex-grow: 1;
+        }
+        .card .precio {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        .card .contacto {
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-top: 2px dashed #000;
+            padding-top: 10px;
+        }
+
+        /* Bloque publicar */
+        .publicar {
+            background: #000;
+            color: #FFD700;
+            padding: 50px 15px;
+            text-align: center;
+        }
+        .publicar h2 {
+            font-family: 'Arial Black', Arial, sans-serif;
+            text-transform: uppercase;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        .opciones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        .opcion {
+            border: 3px solid #FFD700;
+            padding: 25px 20px;
+            text-align: left;
+        }
+        .opcion.destacada {
+            background: #FFD700;
+            color: #000;
+        }
+        .opcion h3 {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .opcion .precio-opcion {
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .opcion p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .publicar a {
+            display: inline-block;
+            padding: 14px 28px;
+            background: #FFD700;
+            color: #000;
+            font-family: 'Arial Black', Arial, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: 3px solid #FFD700;
+        }
+        .publicar a:hover {
+            background: #000;
+            color: #FFD700;
+        }
+
+        /* Donación */
+        .donacion {
+            padding: 40px 15px;
+            text-align: center;
+            border-top: 4px solid #000;
+        }
+        .donacion h2 {
+            font-family: 'Arial Black', Arial, sans-serif;
+            text-transform: uppercase;
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        .donacion p {
+            max-width: 600px;
+            margin: 0 auto 16px;
+            font-size: 0.95rem;
+        }
+        .donacion a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #000;
+            color: #FFD700;
+            font-family: 'Arial Black', Arial, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: 3px solid #000;
+            font-size: 0.9rem;
+        }
+        .donacion a:hover {
+            background: #FFD700;
+            color: #000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-top: 4px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>EL PRECARIO</h1>
+        <p>Ofertas de trabajo, alquileres y otras cosas entre personas. Sin intermediarios, sin rollos.</p>
+    </header>
+
+    <div class="filtros">
+        <button class="activo" data-filtro="todos">Todos</button>
+        <button data-filtro="trabajo">Trabajo</button>
+        <button data-filtro="alquiler">Alquiler</button>
+        <button data-filtro="otros">Otros</button>
+    </div>
+
+    <main class="grid" id="grid">
+        <p style="grid-column:1/-1;text-align:center;font-weight:bold;padding:40px;">Cargando anuncios...</p>
+    </main>
+
+    <!-- Publicar -->
+    <section class="publicar">
+        <h2>Publica tu anuncio</h2>
+        <div class="opciones">
+            <div class="opcion">
+                <h3>Gratis</h3>
+                <div class="precio-opcion">0 €</div>
+                <p>Entra en la próxima actualización del tablón. Sin fecha fija, sin prisa.</p>
+            </div>
+            <div class="opcion destacada">
+                <h3>⚡ Destacado</h3>
+                <div class="precio-opcion">2 €</div>
+                <p>Entra hoy mismo, arriba del todo y con tarjeta resaltada. Se salta la cola.</p>
+            </div>
+        </div>
+        <a href="mailto:tu-email@ejemplo.com?subject=Anuncio%20para%20EL%20PRECARIO">Enviar anuncio por email</a>
+    </section>
+
+    <!-- Donación -->
+    <section class="donacion">
+        <h2>☕ Invita a un café</h2>
+        <p>EL PRECARIO es gratis y sin anuncios. Si te resulta útil, puedes dejar una propina voluntaria para mantener el tablón vivo. Cero obligación.</p>
+        <a href="https://www.paypal.me/tu-usuario" target="_blank" rel="noopener">PayPal</a>
+    </section>
+
+    <footer>
+        &copy; 2024 EL PRECARIO · Hecho entre personas, para personas
+    </footer>
+
+    <script>
+        const etiquetas = { trabajo: 'Trabajo', alquiler: 'Alquiler', otros: 'Otros' };
+        let filtroActual = 'todos';
+        let anunciosGlobal = [];
+
+        function parseCSV(texto) {
+            const lineas = texto.split(/\r?\n/).filter(l => l.trim() !== '');
+            if (lineas.length === 0) return [];
+            const cabecera = lineas[0].split(';').map(s => s.trim().toLowerCase());
+            return lineas.slice(1).map(linea => {
+                const campos = splitCSVLinea(linea);
+                const obj = {};
+                cabecera.forEach((col, i) => obj[col] = (campos[i] || '').trim());
+                return obj;
+            });
+        }
+
+        function splitCSVLinea(linea) {
+            const out = [];
+            let actual = '';
+            let dentroComillas = false;
+            for (let i = 0; i < linea.length; i++) {
+                const c = linea[i];
+                if (c === '"') dentroComillas = !dentroComillas;
+                else if (c === ';' && !dentroComillas) { out.push(actual); actual = ''; }
+                else actual += c;
+            }
+            out.push(actual);
+            return out;
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        function esDestacado(a) {
+            return String(a.destacado || '').toLowerCase() === 'si';
+        }
+
+        function render() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            if (anunciosGlobal.length === 0) {
+                grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;font-weight:bold;padding:40px;">No hay anuncios ahora mismo.</p>';
+                return;
+            }
+
+            const ordenados = [...anunciosGlobal].sort((a, b) => {
+                const da = esDestacado(a) ? 1 : 0;
+                const db = esDestacado(b) ? 1 : 0;
+                if (da !== db) return db - da;
+                const fa = new Date(a.fecha).getTime() || 0;
+                const fb = new Date(b.fecha).getTime() || 0;
+                return fb - fa;
+            });
+
+            ordenados.forEach(a => {
+                const card = document.createElement('article');
+                card.className = 'card' + (esDestacado(a) ? ' destacado' : '');
+                card.dataset.tipo = a.tipo;
+                card.innerHTML = `
+                    ${esDestacado(a) ? '<span class="badge-destacado">★ Destacado</span>' : ''}
+                    <span class="tipo">${etiquetas[a.tipo] || escapeHtml(a.tipo)}</span>
+                    <h2>${escapeHtml(a.titulo)}</h2>
+                    <p>${escapeHtml(a.descripcion)}</p>
+                    ${a.precio ? `<div class="precio">${escapeHtml(a.precio)}</div>` : ''}
+                    <div class="contacto">📞 ${escapeHtml(a.contacto)}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            aplicarFiltro();
+        }
+
+        function aplicarFiltro() {
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.display = (filtroActual === 'todos' || card.dataset.tipo === filtroActual) ? 'flex' : 'none';
+            });
+        }
+
+        document.querySelectorAll('.filtros button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                filtroActual = btn.dataset.filtro;
+                aplicarFiltro();
+            });
+        });
+
+        fetch('anuncios.csv')
+            .then(r => {
+                if (!r.ok) throw new Error('No se pudo cargar anuncios.csv');
+                return r.text();
+            })
+            .then(texto => {
+                anunciosGlobal = parseCSV(texto);
+                render();
+            })
+            .catch(err => {
+                document.getElementById('grid').innerHTML =
+                    '<p style="grid-column:1/-1;text-align:center;font-weight:bold;padding:40px;">No se pudo cargar el tablón. Inténtalo más tarde.</p>';
+                console.error(err);
+            });
+    </script>
+
+</body>
+</html>
