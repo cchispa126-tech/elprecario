@@ -1,0 +1,5 @@
+tipo;titulo;descripcion;precio;contacto;fecha;destacado
+alquiler;Habitación en piso compartido;Habitación exterior con luz natural. Gastos incluidos.;350 €/mes;contacto@ejemplo.com;2024-06-15T12:30:00;si
+trabajo;Pintor con experiencia;Se busca pintor para piso de 3 habitaciones. Material incluido.;150 €;600 000 001;2024-06-15T10:00:00;no
+otros;Vendo bicicleta de montaña;Bici en buen estado, recién revisada. Ruedas nuevas.;90 €;600 000 002;2024-06-15T15:45:00;no
+trabajo;Repartidor fines de semana;Se necesita repartidor con moto propia para sábados y domingos.;10 €/hora;600 000 003;2024-06-15T18:00:00;no
